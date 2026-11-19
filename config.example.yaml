@@ -1,0 +1,37 @@
+# Required
+immich:
+  url: https://immich.example.com    # base URL, no trailing slash; key comes from env IMMICH_CURATOR_KEY
+ollama:
+  url: http://192.0.2.11:11434       # address of the Ollama host running the vision model
+  model: gemma3:4b                   # vision model
+  min_score: 6                       # vision score (1-10) needed to keep a photo the rules did not decide
+home:
+  # Your home coordinates (required unless ha.url is set below). Uncomment and replace both values.
+  # lat: 0.0
+  # lon: 0.0
+  radius_m: 300                      # geofence around home, in metres
+# ha:
+#   url: http://homeassistant.local:8123   # only used to read zone.home when home.lat/lon are not set
+
+# Optional, defaults shown
+travel_km: 30                        # farther than this from home counts as travel
+exclude_albums: []                   # photos in these albums are never shown
+picks_album: "Frame - Picks"         # album for manual picks
+window_days: 60                      # how far back the curator looks
+data_dir: data                       # SQLite state (relative to the repo, or an absolute volume path)
+display: {width: 1920, height: 1200}
+mix: {on_this_day: 0.30, favorites_picks: 0.20, recent_30d: 0.35, library: 0.15}
+repeat_days: 14                      # no repeats within this many days
+screenshot_name: '(?i)screenshot|screen_shot|^IMG_\d+\.(png|webp)$|\.png$'   # filenames treated as screenshots
+# Keywords matched against OCR text to spot receipts and documents. To add a language, append its words,
+# for example Norwegian: kvittering, faktura, mva, skjermbilde
+ocr_keywords: [receipt, invoice, subtotal, total, vat, order number, tracking]
+frame:
+  port: 8099
+  rotate_minutes: 15
+  image_size: preview                # preview or fullsize (fullsize may need the asset.download scope)
+  pool_ttl_minutes: 5
+schedule:
+  curator_minutes: 60                # how often the curator runs
+  backfill_start: "00:30"            # nightly backfill window start, HH:MM
+  backfill_hours: 5.5                # length of the window, 0 to 23.5

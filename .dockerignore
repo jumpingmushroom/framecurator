@@ -1,0 +1,9 @@
+.venv
+.git
+data
+reports
+.env
+config.yaml
+tests
+tests_ha
+custom_components

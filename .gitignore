@@ -1,0 +1,11 @@
+.env
+config.yaml
+*.db
+reports/
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+data/
+*.egg-info/
+.private-strings

@@ -1,0 +1,12 @@
+{
+  "domain": "framecurator",
+  "name": "Frame Curator",
+  "codeowners": ["@jumpingmushroom"],
+  "config_flow": true,
+  "documentation": "https://github.com/jumpingmushroom/framecurator",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/jumpingmushroom/framecurator/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

@@ -1,0 +1,39 @@
+# Two always-on services from one image: `frame` (API) and `curator` (hourly curator + nightly backfill).
+x-common: &common
+  image: ghcr.io/jumpingmushroom/framecurator:${FRAMECURATOR_VERSION:-latest}
+  # build: .                      # uncomment to build from source during development
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  volumes:
+    - ./config.yaml:/app/config.yaml:ro
+    - ./data:/app/data
+  tmpfs: [/tmp]
+
+services:
+  frame:
+    <<: *common
+    restart: unless-stopped
+    ports: ["8099:8099"]          # LAN only: never forward this port on the router
+    environment:
+      FRAME_TOKEN: ${FRAME_TOKEN:?}
+      IMMICH_FRAME_KEY: ${IMMICH_FRAME_KEY:?}
+      SLIDESHOW_TOKEN: ${SLIDESHOW_TOKEN:-}
+      TZ: ${TZ:-UTC}
+  curator:
+    <<: *common
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./data:/app/data
+      - ./reports:/app/reports      # the backfill's sample report
+    command: ["python", "-m", "framecurator.scheduler"]
+    environment:
+      IMMICH_CURATOR_KEY: ${IMMICH_CURATOR_KEY:?}
+      HA_TOKEN: ${HA_TOKEN:-}
+      TZ: ${TZ:-UTC}
+    healthcheck:
+      # heartbeat is written each pass; a backfill slice can take ~60 min between passes
+      test: ["CMD", "python", "-c", "import os,time,sys;sys.exit(time.time()-os.path.getmtime('/app/data/curator.heartbeat')>7200)"]
+      interval: 5m
+      start_period: 10m
