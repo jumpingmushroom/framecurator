@@ -13,7 +13,11 @@ def in_bucket(name, asset, picks, now):
     t = taken(asset)
     if name == "on_this_day":
         # shortcut: month/day within 3 days, ignoring year-end wraparound; fine for a photo frame
-        return t.year < now.year and abs((t.replace(year=now.year) - now.replace(tzinfo=t.tzinfo)).days) <= 3
+        try:
+            this_year = t.replace(year=now.year)
+        except ValueError:  # 29 February in a non-leap year
+            this_year = t.replace(year=now.year, day=28)
+        return t.year < now.year and abs((this_year - now.replace(tzinfo=t.tzinfo)).days) <= 3
     if name == "favorites_picks":
         return bool(asset.get("isFavorite")) or asset["id"] in picks
     if name == "recent_30d":

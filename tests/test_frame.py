@@ -5,7 +5,7 @@ from datetime import datetime
 from PIL import Image
 
 from framecurator.frame.render import render
-from framecurator.frame.select import pick
+from framecurator.frame.select import in_bucket, pick
 
 NOW = datetime(2026, 10, 26)
 
@@ -64,3 +64,9 @@ def test_all_zero_weights_fall_back_to_the_whole_pool():
     pool = [a("x", "2026-10-20T10:00:00"), a("y", "2020-01-01T10:00:00")]
     got, bucket = pick(pool, set(), set(), {"recent_30d": 0, "library": 0}, "mixed", NOW, random.Random(1))
     assert bucket == "library" and got["id"] in {"x", "y"}
+
+
+def test_a_leap_day_photo_counts_as_on_this_day_in_a_non_leap_year_without_crashing():
+    leap = {"id": "x", "localDateTime": "2012-02-29T12:00:00.000Z"}
+    assert in_bucket("on_this_day", leap, set(), datetime(2026, 2, 28, 12))
+    assert not in_bucket("on_this_day", leap, set(), datetime(2026, 11, 20, 12))
