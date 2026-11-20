@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.1] - 2026-11-20
+
+- Fixed: a photo taken on 29 February made every photo pick fail in non-leap years, so the frame and the Home Assistant entities went unavailable.
+
 ## [0.1.0] - 2026-11-19
 
 - Curator: tags Immich photos `frame/yes` or `frame/no` from metadata rules and a local Ollama vision model.
